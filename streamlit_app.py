@@ -1,4 +1,5 @@
 import streamlit as st
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.llms import OpenAI
 
 st.set_page_config(page_title='🦜🔗 Product Page App')
@@ -12,25 +13,34 @@ else:
     openai_api_key = st.sidebar.text_input('Enter OpenAI API Key:', type='password')
 
 def generate_website_content(uploaded_files, openai_api_key):
-    # Combine all uploaded documents into one string
-    combined_document = " ".join([file.read().decode() for file in uploaded_files])
-    
-    # Define the refined prompt
-    prompt = f"""
-    {combined_document}
-    Using the uploaded document as a reference and maintaining its tone and voice, please craft an SEO-optimized and informative website page on the product. Structure the content as follows:
-    - **Title**: A compelling title for the product.
-    - **PRODUCT DESCRIPTION**: 2 concise paragraphs detailing the product, its design, and its main features.
-    - **FEATURES AND BENEFITS**: A bulleted list highlighting the product's unique features and the benefits they offer.
-    - **APPLICATIONS**: A bulleted list showcasing various use-cases and industries where the product can be applied.
-    - **PERFORMANCE**: A bulleted list emphasizing the product's performance metrics, standards, and efficiency.
-    Ensure the content is comprehensive, engaging, and effectively highlights the product's value proposition.
-    """
-    
-    # Use OpenAI to generate the content
+    # Combine all uploaded files into one document
+    combined_document = "\n\n".join([file.read().decode() for file in uploaded_files])
+
+    # Split document into chunks
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    chunks = text_splitter.create_documents([combined_document])
+
+    all_responses = []
     llm = OpenAI(model_name='text-davinci-003', openai_api_key=openai_api_key)
-    response = llm(prompt)
-    return response
+
+    for chunk in chunks:
+        # Define the prompt for each chunk
+        prompt = f"""
+        {chunk}
+        Using the uploaded document as a reference and maintaining its tone and voice, please craft an SEO-optimized and informative website page on the product. Structure the content as follows:
+        - **Title**: A compelling title for the product.
+        - **PRODUCT DESCRIPTION**: 2 concise paragraphs detailing the product, its design, and its main features.
+        - **FEATURES AND BENEFITS**: A bulleted list highlighting the product's unique features and the benefits they offer.
+        - **APPLICATIONS**: A bulleted list showcasing various use-cases and industries where the product can be applied.
+        - **PERFORMANCE**: A bulleted list emphasizing the product's performance metrics, standards, and efficiency.
+        Ensure the content is comprehensive, engaging, and effectively highlights the product's value proposition.
+        """
+
+        # Get response from the model
+        response = llm(prompt)
+        all_responses.append(response)
+
+    return "\n\n".join(all_responses)
 
 # File upload (multiple files allowed)
 uploaded_files = st.file_uploader('Upload documents', type='txt', accept_multiple_files=True)
