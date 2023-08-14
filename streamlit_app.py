@@ -15,15 +15,16 @@ def generate_website_content(uploaded_files, openai_api_key):
     # Combine all uploaded documents into one string
     combined_document = " ".join([file.read().decode() for file in uploaded_files])
     
-    # Define the prompt
+    # Define the refined prompt
     prompt = f"""
     {combined_document}
-    Could you act as an SEO expert? Using the same tone and voice I provided, could you write a website page that is SEO optimized and informative?
-    Please use the following Subheadings:
-    PRODUCT DESCRIPTION - this section needs to consist of 2 Brief Paragraphs.
-    FEATURES AND BENEFITS - this section needs to consist of only bullets
-    APPLICATIONS - this section needs to consist of only bullets
-    PERFORMANCE - this section needs to consist of only bullets
+    Using the uploaded document as a reference and maintaining its tone and voice, please craft an SEO-optimized and informative website page on the product. Structure the content as follows:
+    - **Title**: A compelling title for the product.
+    - **PRODUCT DESCRIPTION**: 2 concise paragraphs detailing the product, its design, and its main features.
+    - **FEATURES AND BENEFITS**: A bulleted list highlighting the product's unique features and the benefits they offer.
+    - **APPLICATIONS**: A bulleted list showcasing various use-cases and industries where the product can be applied.
+    - **PERFORMANCE**: A bulleted list emphasizing the product's performance metrics, standards, and efficiency.
+    Ensure the content is comprehensive, engaging, and effectively highlights the product's value proposition.
     """
     
     # Use OpenAI to generate the content
