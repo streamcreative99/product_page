@@ -20,27 +20,28 @@ def generate_website_content(uploaded_files, openai_api_key):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     chunks = text_splitter.create_documents([combined_document])
 
-    all_responses = []
+    all_summaries = []
     llm = OpenAI(model_name='text-davinci-003', openai_api_key=openai_api_key)
 
     for chunk in chunks:
-        # Define the prompt for each chunk
-        prompt = f"""
-        {chunk}
-        Using the uploaded document as a reference and maintaining its tone and voice, please craft an SEO-optimized and informative website page on the product. Structure the content as follows:
-        - **Title**: A compelling title for the product.
-        - **PRODUCT DESCRIPTION**: 2 concise paragraphs detailing the product, its design, and its main features.
-        - **FEATURES AND BENEFITS**: A bulleted list highlighting the product's unique features and the benefits they offer.
-        - **APPLICATIONS**: A bulleted list showcasing various use-cases and industries where the product can be applied.
-        - **PERFORMANCE**: A bulleted list emphasizing the product's performance metrics, standards, and efficiency.
-        Ensure the content is comprehensive, engaging, and effectively highlights the product's value proposition.
-        """
+        # Get a summary of each chunk
+        summary_prompt = f"Summarize the following text in 2-3 sentences:\n\n{chunk}"
+        summary = llm(summary_prompt)
+        all_summaries.append(summary)
 
-        # Get response from the model
-        response = llm(prompt)
-        all_responses.append(response)
+    # Combine all summaries into one comprehensive summary
+    comprehensive_summary = " ".join(all_summaries)
 
-    return "\n\n".join(all_responses)
+    # Define the final prompt using the comprehensive summary
+    prompt = f"""
+    {comprehensive_summary}
+    Using the summarized document as a reference and maintaining its tone and voice, please craft an SEO-optimized and informative website page on the product...
+    """
+
+    # Generate the final content
+    content = llm(prompt)
+
+    return content
 
 # File upload (multiple files allowed)
 uploaded_files = st.file_uploader('Upload documents', type='txt', accept_multiple_files=True)
