@@ -38,9 +38,9 @@ def generate_website_content(uploaded_files, openai_api_key):
         Using the uploaded document as a reference and maintaining its tone and voice, please craft an SEO-optimized and informative website page on the product. Structure the content as follows:
         - **Title**: A compelling title for the product.
         - **PRODUCT DESCRIPTION**: 2 concise paragraphs detailing the product, its design, and its main features.
-        - **FEATURES AND BENEFITS**: A bulleted list highlighting the product's unique features and the benefits they offer.
-        - **APPLICATIONS**: A bulleted list showcasing various use-cases and industries where the product can be applied.
-        - **PERFORMANCE**: A bulleted list emphasizing the product's performance metrics, standards, and efficiency.
+        - **FEATURES AND BENEFITS**: A bulleted list made of 5-6 bullets highlighting the product's unique features and the benefits they offer.
+        - **APPLICATIONS**: A bulleted list made of 5-6 bullets showcasing various use-cases and industries where the product can be applied.
+        - **PERFORMANCE**: A bulleted list made of 5-6 bullets emphasizing the product's performance metrics, standards, and efficiency.
         Ensure the content is comprehensive, engaging, and effectively highlights the product's value proposition.
         """
 
